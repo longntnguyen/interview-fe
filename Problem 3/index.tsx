@@ -18,7 +18,6 @@
 import React, { useMemo } from "react";
 import { useWalletBalances, usePrices } from "@/hooks";
 import WalletRow from "@/components/WalletRow";
-import classes from "./WalletPage.module.scss";
 
 interface WalletBalance {
   currency: string;
