@@ -1,4 +1,7 @@
 function sumToNForLoop(n) {
+  if (n < 0) {
+    return 0;
+  }
   let sum = 0;
   for (let i = 1; i <= n; i++) {
     sum += i;
@@ -7,6 +10,9 @@ function sumToNForLoop(n) {
 }
 
 function sumToNRecursion(n) {
+  if (n <= 0) {
+    return 0;
+  }
   if (n === 1) {
     return 1;
   }
@@ -14,5 +20,8 @@ function sumToNRecursion(n) {
 }
 
 function sumToNArithmetic(n) {
+  if (n < 0) {
+    return 0;
+  }
   return (n * (n + 1)) / 2;
 }
