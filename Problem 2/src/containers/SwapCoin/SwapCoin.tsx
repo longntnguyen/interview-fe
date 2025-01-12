@@ -7,27 +7,42 @@ import {
 import SouthIcon from "@mui/icons-material/South";
 import { formatPrice } from "@/utils/formatPrice";
 import { CoinSelection } from "./components/CoinSelection";
+import { SelectCoinPopup } from "@/components/SelectCoinPopup/SelectCoinPopup";
 
 export const SwapCoinContainer = () => {
   const {
     formInfo,
     tokenPrices,
+    openTypeTokenModal,
+    coinsInfo,
+    recalculatePrice,
+    handleChangeToken,
+    setOpenTypeTokenModal,
     handleChangeInfo,
-    swapCoinValue,
+    handleSwapCoinValue,
     handleSubmit,
+    onFocusInput,
   } = useSwapCoinContext();
+
   return (
     <div className="swap-coin-container">
       <h2>Swap Token</h2>
       <div className="actions-container">
-        <div className="coin-input-container">
+        <div
+          className="coin-input-container"
+          onClick={() => onFocusInput("from")}
+        >
           <OutlinedInput
             className="coin-input"
             value={formInfo.fromAmount}
             placeholder="0"
+            onBlur={() => recalculatePrice("from")}
             onChange={(e) => {
               const value = e.target.value.replace(/[^0-9]/g, "");
-              handleChangeInfo("fromAmount", +value);
+              handleChangeInfo(
+                "fromAmount",
+                Math.round(+value * 10000) / 10000
+              );
             }}
             endAdornment={
               <CoinSelection currency={formInfo.from} typeInput="from" />
@@ -37,18 +52,22 @@ export const SwapCoinContainer = () => {
             ${formatPrice(tokenPrices.fromPrice)}
           </span>
         </div>
-        <Button className="swap-button" onClick={swapCoinValue}>
+        <Button className="swap-button" onClick={handleSwapCoinValue}>
           <SouthIcon />
         </Button>
-        <div className="coin-input-container">
+        <div
+          className="coin-input-container"
+          onClick={() => onFocusInput("to")}
+        >
           <OutlinedInput
             className="coin-input"
             placeholder="0"
             value={formInfo.toAmount}
             onChange={(e) => {
               const value = e.target.value.replace(/[^0-9]/g, "");
-              handleChangeInfo("toAmount", +value);
+              handleChangeInfo("toAmount", Math.round(+value * 10000) / 10000);
             }}
+            onBlur={() => recalculatePrice("to")}
             endAdornment={
               <CoinSelection currency={formInfo.to} typeInput="to" />
             }
@@ -65,6 +84,13 @@ export const SwapCoinContainer = () => {
       >
         Swap Token
       </Button>
+
+      <SelectCoinPopup
+        open={!!openTypeTokenModal}
+        setOpen={() => setOpenTypeTokenModal(null)}
+        coinsInfo={coinsInfo}
+        selectToken={handleChangeToken}
+      />
     </div>
   );
 };

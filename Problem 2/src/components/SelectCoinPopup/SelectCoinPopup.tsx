@@ -3,10 +3,11 @@ import { FC, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import "./styles.scss";
 import { formatPrice } from "@/utils/formatPrice";
+import CloseIcon from "@mui/icons-material/Close";
 
 type SelectCoinPopupProps = {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: (open: string | null) => void;
   coinsInfo: CoinsResponse;
   selectToken: (token: string) => void;
 };
@@ -24,10 +25,13 @@ export const SelectCoinPopup: FC<SelectCoinPopupProps> = ({
   return (
     <Modal
       className="select-coin-popup-container"
-      open={open}
-      onClose={() => setOpen(false)}
+      open={!!open}
+      onClose={() => setOpen(null)}
     >
       <div className="select-coin-popup">
+        <div className="close-btn" onClick={() => setOpen(null)}>
+          <CloseIcon />
+        </div>
         <h4>Select Token</h4>
         <OutlinedInput
           startAdornment={<SearchIcon />}

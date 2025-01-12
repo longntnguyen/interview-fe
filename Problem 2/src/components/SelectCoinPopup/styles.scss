@@ -1,4 +1,10 @@
 .select-coin-popup-container {
+  .close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
   .select-coin-popup {
     position: absolute;
     top: 50%;
@@ -9,7 +15,7 @@
     border: none;
     outline: none;
     border-radius: 10px;
-    padding-top: 20px;
+    padding-top: 30px;
     .tokens-container::-webkit-scrollbar {
       width: 8px;
     }
