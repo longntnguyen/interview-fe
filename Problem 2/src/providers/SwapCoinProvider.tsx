@@ -14,9 +14,10 @@ const formatTokenPrices = (
   originFromPrice: number,
   originToPrice: number
 ) => {
+  if (!originToPrice) return 0;
   return (
     parseFloat(
-      ((amount * originToPrice) / (originFromPrice || 1)).toFixed(4)
+      ((amount * originFromPrice) / (originToPrice || 1)).toFixed(4)
     ) || 0
   );
 };
@@ -52,12 +53,6 @@ export const SwapCoinProvider = ({ children }: { children: ReactNode }) => {
     fromAmount: 0,
     toAmount: 0,
   });
-
-  useEffect(() => {
-    axios.get("https://interview.switcheo.com/prices.json").then((res) => {
-      setCoinsInfo(res.data);
-    });
-  }, []);
 
   const handleSwapCoinValue = () => {
     setFormInfo((prev) => ({
@@ -149,8 +144,8 @@ export const SwapCoinProvider = ({ children }: { children: ReactNode }) => {
         ...prev,
         toAmount: formatTokenPrices(
           formInfo.fromAmount,
-          tokenPrices.originToTokenPrice,
-          tokenPrices.originFromTokenPrice
+          tokenPrices.originFromTokenPrice,
+          tokenPrices.originToTokenPrice
         ),
       }));
     } else if (type === "to" && formInfo.toAmount) {
@@ -158,8 +153,8 @@ export const SwapCoinProvider = ({ children }: { children: ReactNode }) => {
         ...prev,
         fromAmount: formatTokenPrices(
           formInfo.toAmount,
-          tokenPrices.originFromTokenPrice,
-          tokenPrices.originToTokenPrice
+          tokenPrices.originToTokenPrice,
+          tokenPrices.originFromTokenPrice
         ),
       }));
     }
@@ -167,10 +162,37 @@ export const SwapCoinProvider = ({ children }: { children: ReactNode }) => {
 
   const handleChangeToken = (token: string) => {
     if (openTypeTokenModal) {
-      handleChangeInfo(openTypeTokenModal, token);
+      // set value for remain token field when user select token
+      if (openTypeTokenModal === "from") {
+        setFormInfo((prev) => ({
+          ...prev,
+          from: token,
+          fromAmount: formatTokenPrices(
+            prev.toAmount,
+            tokenPrices.originToTokenPrice,
+            coinsInfo.find((coin) => coin.currency === token)?.price || 0
+          ),
+        }));
+      } else if (openTypeTokenModal === "to") {
+        setFormInfo((prev) => ({
+          ...prev,
+          to: token,
+          toAmount: formatTokenPrices(
+            prev.fromAmount,
+            tokenPrices.originFromTokenPrice,
+            coinsInfo.find((coin) => coin.currency === token)?.price || 0
+          ),
+        }));
+      }
       setOpenTypeTokenModal(null);
     }
   };
+
+  useEffect(() => {
+    axios.get("https://interview.switcheo.com/prices.json").then((res) => {
+      setCoinsInfo(res.data);
+    });
+  }, []);
 
   const value = {
     formInfo,
